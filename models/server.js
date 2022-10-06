@@ -7,7 +7,7 @@ class Server {
     constructor() {
         this.app = express()
         this.port = process.env.PORT
-        this.usersRoutePath = '/api/users'
+        this.usersRoutePath = '/api/user'
 
         // Conectar a BD
         this.connectBD()

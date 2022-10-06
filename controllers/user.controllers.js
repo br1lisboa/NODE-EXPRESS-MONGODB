@@ -1,4 +1,7 @@
 const { response, request } = require('express')
+const bcryptjs = require('bcryptjs')
+
+const User = require('../models/user')
 
 const userGet = (req = request, res = response) => {
     const query = req.query // esto tambien se puede desestructurar
@@ -9,12 +12,21 @@ const userGet = (req = request, res = response) => {
     })
 }
 
-const userPost = (req = request, res = response) => {
-    const body = req.body // esto se puede desestructurar
+const userPost = async (req = request, res = response) => {
+    const { name, mail, password, role } = req.body // esto se puede desestructurar
+    const user = new User({ name, mail, password, role }) // model de user con schema y model de mongosee
+    //> PASOS PARA EL ENCRYPT <//
+    // 1- Verificar si el correo existe (si existe el correo, para que hacer la encrypt?)
+
+    // 2- Encriptar la contraseña
+    const salt = bcryptjs.genSaltSync(10) // El salt es el numero de vueltas para realizar la desencrypt.
+    user.password = bcryptjs.hashSync(password, salt) // El hash es para encryptar en una sola via
+    // 3- Guardar en BD
+    await user.save() // con este metodo le decimos a mongosee que guarde los datos en la bd 
     res.json({
         ok: true,
         msg: 'post Api',
-        body
+        user
     })
 }
 
