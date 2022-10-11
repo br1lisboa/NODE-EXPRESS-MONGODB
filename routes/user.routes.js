@@ -2,6 +2,8 @@ const { Router } = require('express')
 const { userGet, userPut, userPost, userDelete, userPatch } = require('../controllers/user.controllers')
 const { check } = require('express-validator')
 const { validateInp } = require('../middlewares/validate-inp')
+const { isValidRole, isValidMail } = require('../helpers/db-validators')
+
 
 const router = Router()
 
@@ -12,7 +14,9 @@ router.post('/', [
     check('name', 'El nombre es obligatorio.').not().isEmpty(),
     check('password', 'El password debe tener mas de 6 letras.').isLength({ min: 6 }),
     check('mail', 'El correo no es valido.').isEmail(),
-    check('role', 'No es un rol permitido.').isIn(['ADMIN_ROLE', 'USER_ROLE']),
+    check('mail').custom(isValidMail),
+    // check('role', 'No es un rol permitido.').isIn(['ADMIN_ROLE', 'USER_ROLE']), >> vamos a checkearlo desde la bd
+    check('role').custom(isValidRole),
     // ValidationResult trabaja con el middleware de routes, que "guarda" los errores del check, entonces podemos validar.
     validateInp
 ], userPost)
