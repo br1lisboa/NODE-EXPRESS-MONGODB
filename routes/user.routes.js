@@ -2,13 +2,15 @@ const { Router } = require('express')
 const { userGet, userPut, userPost, userDelete, userPatch } = require('../controllers/user.controllers')
 const { check } = require('express-validator')
 const { validateInp } = require('../middlewares/validate-inp')
-const { isValidRole, isValidMail } = require('../helpers/db-validators')
+const { isValidRole, isValidMail, isValidUserById } = require('../helpers/db-validators')
 
 
 const router = Router()
 
+//GET
 router.get('/', userGet)
 
+//POST
 // El segundo parametro es un middleware, y usando express-validator le mandamos el check, espicificando que campo del body queremos validar.
 router.post('/', [
     check('name', 'El nombre es obligatorio.').not().isEmpty(),
@@ -21,8 +23,15 @@ router.post('/', [
     validateInp
 ], userPost)
 
-router.put('/:id', userPut)
+//PUT
+router.put('/:id', [
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom(isValidUserById),
+    check('role').custom(isValidRole),
+    validateInp
+], userPut)
 
+//DELETE
 router.delete('/', userDelete)
 
 router.patch('/', userPatch)
