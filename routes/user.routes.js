@@ -4,7 +4,6 @@ const { check } = require('express-validator')
 const { validateInp } = require('../middlewares/validate-inp')
 const { isValidRole, isValidMail, isValidUserById } = require('../helpers/db-validators')
 
-
 const router = Router()
 
 //GET
@@ -32,7 +31,11 @@ router.put('/:id', [
 ], userPut)
 
 //DELETE
-router.delete('/', userDelete)
+router.delete('/:id', [
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id').custom(isValidUserById),
+    validateInp
+], userDelete)
 
 router.patch('/', userPatch)
 

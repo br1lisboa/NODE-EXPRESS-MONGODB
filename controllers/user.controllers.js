@@ -3,12 +3,23 @@ const bcryptjs = require('bcryptjs')
 
 const User = require('../models/user')
 
-const userGet = (req = request, res = response) => {
-    const query = req.query // esto tambien se puede desestructurar
+const userGet = async (req = request, res = response) => {
+
+    const { limit = 5, from = 0 } = req.query
+    const query = { state: true }
+
+    // Con el promise.all podemos hacer promesas de manera simultanea, para que puedan ejecutarse a la vez cuando no dependen
+    // una de otra, reduciendo el tiempo de espera.
+    const [total, users] = await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+            .limit(Number(limit))
+            .skip(Number(from)),
+    ])
+
     res.json({
-        ok: true,
-        msg: 'get Api - controller',
-        query
+        total,
+        users
     })
 }
 
@@ -46,18 +57,21 @@ const userPut = async (req, res = response) => {
 
     const user = await User.findByIdAndUpdate(id, rest)
 
-    res.json({
-        ok: true,
-        msg: 'put Api- userPut',
-        user
-    })
+    res.json(user)
 }
 
+const userDelete = async (req, res = response) => {
 
-const userDelete = (req, res = response) => {
+    const { id } = req.params
+
+    // Borrado FISICO - NO recomendado - Por que se pierde la integridad referencial
+    // const userDelete = await User.findByIdAndDelete(id)
+
+    // Borrado recomendado - cambiar state a false
+    const userDelete = await User.findByIdAndUpdate(id, { state: false })
+
     res.json({
-        ok: true,
-        msg: 'delete Api'
+        userDelete
     })
 }
 
