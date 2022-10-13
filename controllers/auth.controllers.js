@@ -1,6 +1,7 @@
 const { response } = require('express')
 const bcryptjs = require('bcryptjs')
 const User = require('../models/user')
+const { generateJWT } = require('../helpers/generator-jwt')
 
 const loginController = async (req, res = response) => {
 
@@ -31,9 +32,13 @@ const loginController = async (req, res = response) => {
         }
 
         // Generar el JWT jason web token
+        const token = await generateJWT(users.id)
+
         res.json({
-            msg: 'Login ok'
+            users,
+            token
         })
+        
     } catch (error) {
         console.log(error)
         // Status 500 == internal server error
