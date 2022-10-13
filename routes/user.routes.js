@@ -3,6 +3,7 @@ const { userGet, userPut, userPost, userDelete, userPatch } = require('../contro
 const { check } = require('express-validator')
 const { validateInp } = require('../middlewares/validate-inp')
 const { isValidRole, isValidMail, isValidUserById } = require('../helpers/db-validators')
+const { validateJWT } = require('../middlewares/validate-jwt')
 
 const router = Router()
 
@@ -32,6 +33,7 @@ router.put('/:id', [
 
 //DELETE
 router.delete('/:id', [
+    validateJWT,
     check('id', 'No es un ID valido').isMongoId(),
     check('id').custom(isValidUserById),
     validateInp

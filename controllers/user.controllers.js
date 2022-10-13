@@ -63,6 +63,7 @@ const userPut = async (req, res = response) => {
 const userDelete = async (req, res = response) => {
 
     const { id } = req.params
+    const uid = req.uid
 
     // Borrado FISICO - NO recomendado - Por que se pierde la integridad referencial
     // const userDelete = await User.findByIdAndDelete(id)
@@ -70,8 +71,11 @@ const userDelete = async (req, res = response) => {
     // Borrado recomendado - cambiar state a false
     const userDelete = await User.findByIdAndUpdate(id, { state: false })
 
+    const userAuth = req.userAuth
+
     res.json({
-        userDelete
+        userDelete,
+        userAuth
     })
 }
 

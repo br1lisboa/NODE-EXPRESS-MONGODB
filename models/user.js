@@ -34,7 +34,8 @@ const UserSchema = Schema({
 
 // Aca vamos a sobreescribir un metodo de mongo.
 UserSchema.methods.toJSON = function () {
-    const { __v, password, ...user } = this.toObject()
+    const { __v, password, _id, ...user } = this.toObject()
+    user.uid = _id
     return user
 }
 
