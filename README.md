@@ -27,4 +27,10 @@
 * Setting environment variables.
 * Deleting files: a- Physically deleted from the DB. b- Elimination by state in a field of the collection.
 
+* JWT.
+* CUSTOM LOGIN.
+* Rutes protect whit TOKEN.
+* Read token payload whitout the signature.
+* Custom Middleware.
+
 ### *Thanks for stopping by here!*
