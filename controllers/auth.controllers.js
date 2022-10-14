@@ -51,16 +51,99 @@ const loginController = async (req, res = response) => {
 }
 
 const googleSingIn = async (req, res = response) => {
+
     const { id_token } = req.body
+    console.log(id_token)
+
 
     try {
+        const { name, img, mail } = await googleVerify(id_token)
+        console.log(name, img, mail)
+
+        // Referencia para verificar si el correo ya existe en la base de datos
+        let users = await User.findOne({ mail })
+        console.log(users)
+
+        if (!users) {
+            // Tengo que crearlo si no existe
+            console.log('creando user')
+            const data = {
+                name,
+                mail,
+                password: ':P',
+                img,
+                google: true
+            }
+            console.log(data)
+            user = new User(data)
+            console.log(user)
+            await users.save()
+        }
+
+        // Si el usuario en BD
+        if(!user.state){
+            return res.status(401).json({
+                msg:'Hable con el ADMIN - user bloqueado'
+            })
+        }
+
+        // Generar el JWT jason web token
+        const token = await generateJWT(user.id)
+
+        res.json({
+            user,
+            token
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            ok: false,
+            msg: 'El token de Google no se pudo verificar - ringonfire'
+        })
+    }
+
+    /* try {
 
         const googleUser = await googleVerify(id_token)
-        const { name, picture, email } = googleUser
+        console.log(googleUser)
+
+        const { name, img, mail } = googleUser
+        console.log(mail)
+
+        // Crear referencia para verificar si el correo existe en nuestra BD
+        let user = await User.findOne({ mail })
+        //console.log(user)
+
+        // err aca
+        if (!user) {
+            // Tengo que crearlo
+            const data = {
+                name,
+                mail,
+                password: 'xD',
+                img,
+                google: true
+            }
+            user = new User(data)
+            await user.save()
+            console.log(user)
+        }
+
+        // Si el usuario en BD 
+        if (!user.state) {
+            return res.status(401).json({
+                msg: 'Hable con el ADMINISTRADOR - usuario bloqueado'
+            })
+        }
+
+        // Generar el jwt
+        const token = await generateJWT(user.id)
+
 
         res.json({
             msg: 'todo ok, Google SignIn',
-            id_token
+            user,
+            token
         })
 
     } catch (error) {
@@ -68,7 +151,7 @@ const googleSingIn = async (req, res = response) => {
             ok: false,
             msg: 'El token no se pudo verificar'
         })
-    }
+    } */
 }
 
 module.exports = {
