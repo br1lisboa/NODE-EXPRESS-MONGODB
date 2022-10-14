@@ -1,7 +1,8 @@
-const { response } = require('express')
+const { response, json } = require('express')
 const bcryptjs = require('bcryptjs')
 const User = require('../models/user')
 const { generateJWT } = require('../helpers/generator-jwt')
+const { googleVerify } = require('../helpers/google-verify')
 
 const loginController = async (req, res = response) => {
 
@@ -38,7 +39,7 @@ const loginController = async (req, res = response) => {
             users,
             token
         })
-        
+
     } catch (error) {
         console.log(error)
         // Status 500 == internal server error
@@ -49,6 +50,28 @@ const loginController = async (req, res = response) => {
 
 }
 
+const googleSingIn = async (req, res = response) => {
+    const { id_token } = req.body
+
+    try {
+
+        const googleUser = await googleVerify(id_token)
+        const { name, picture, email } = googleUser
+
+        res.json({
+            msg: 'todo ok, Google SignIn',
+            id_token
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            ok: false,
+            msg: 'El token no se pudo verificar'
+        })
+    }
+}
+
 module.exports = {
-    loginController
+    loginController,
+    googleSingIn
 }

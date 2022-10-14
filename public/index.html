@@ -1,12 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Denegado</title>
+    <title>Google Identity</title>
 </head>
+
 <body>
-    <h1>Acceso Denegado</h1>
+    <h1>Google Sign-in</h1>
+    <hr>
+
+    <div id="g_id_onload" data-client_id="464616461016-j438ml2p827ket7g7hr391ofppjklt7n.apps.googleusercontent.com"
+        data-auto_prompt="false" data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with"
+        data-shape="rectangular" data-logo_alignment="left">
+    </div>
+
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+        function handleCredentialResponse(response) {
+
+            // GOOGLE token : ID_TOKEN
+            // console.log('id_token', response.credential);
+            const body = { id_token: response.credential }
+
+            // Por defecto el fetch es una peticion GET, nosotros esamos la peticion POST para el sigIn, por lo que hay que transformar esto.
+            fetch('http://localhost:6060/api/auth/google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(resp => resp.json())
+                .then(resp => {
+                    console.log(resp)
+                })
+                .catch(console.warn)
+        }
+    </script>
+
 </body>
+
 </html>
