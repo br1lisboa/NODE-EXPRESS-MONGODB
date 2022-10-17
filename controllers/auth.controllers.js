@@ -51,16 +51,44 @@ const loginController = async (req, res = response) => {
 }
 
 const googleSingIn = async (req, res = response) => {
+
     const { id_token } = req.body
 
     try {
 
-        const googleUser = await googleVerify(id_token)
-        const { name, picture, email } = googleUser
+        const { name, img, mail } = await googleVerify(id_token)
+
+        let users = await User.findOne({ mail })
+
+        console.log(users)
+
+        if (!users) {
+            //Crearlo
+            const data = {
+                name,
+                mail,
+                password: ':P',
+                img,
+                google: true,
+                role: "USER_ROLE"
+            }
+            users = new User(data)
+            await users.save()
+        }
+
+        // Si el usuario en BD
+        if (!users.state) {
+            return res.status(401).json({
+                msg: 'Hable con el administrador, usuario bloqueado.'
+            })
+        }
+
+        // Generar el JWT jason web token
+        const token = await generateJWT(users.id)
 
         res.json({
-            msg: 'todo ok, Google SignIn',
-            id_token
+            users,
+            token
         })
 
     } catch (error) {
