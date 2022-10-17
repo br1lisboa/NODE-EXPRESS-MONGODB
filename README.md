@@ -33,4 +33,10 @@
 * Read token payload whitout the signature.
 * Custom Middleware.
 
+* API Key Google.
+* API Secret.
+* Librarys from GOOGLE for tokens validations.
+* Google FrontEnd SIGNIN and SIGNOUT.
+* Customs users create from GoogleAccounts. 
+
 ### *Thanks for stopping by here!*
