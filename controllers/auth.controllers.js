@@ -60,7 +60,7 @@ const googleSingIn = async (req, res = response) => {
 
         let users = await User.findOne({ mail })
 
-        console.log(users)
+        //console.log(users)
 
         if (!users) {
             //Crearlo
