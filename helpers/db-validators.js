@@ -1,3 +1,4 @@
+const { Category } = require('../models')
 const Role = require('../models/role')
 const User = require('../models/user')
 
@@ -22,8 +23,25 @@ const isValidUserById = async (id = '') => {
     }
 }
 
+const isAdminUserByRole = async (role = 'ADMIN_ROLE') => {
+    const userValid = await User.findOne({ role })
+    if (!userValid) {
+        throw new Error('El usuario no tiene un rol valido para esta operacion')
+    }
+}
+
+// Este validador es para verificar si existe el ID en mi BD de categorias
+const isValidCategoryById = async (id) => {
+    const categValid = await Category.findById(id)
+    if (!categValid) {
+        throw new Error(`No existe categoria con el ID ${id}`)
+    }
+}
+
 module.exports = {
     isValidRole,
     isValidMail,
-    isValidUserById
+    isValidUserById,
+    isValidCategoryById,
+    isAdminUserByRole
 }

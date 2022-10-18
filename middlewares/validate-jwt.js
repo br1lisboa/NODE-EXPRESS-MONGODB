@@ -19,29 +19,29 @@ const validateJWT = async (req = request, res = response, next) => {
         req.uid = uid
         // Verificiar coincidencia del uid con la bd
         const userAuth = await User.findById(uid)
-        if(!userAuth){
+        if (!userAuth) {
             return res.status(401).json({
-                msg:'Token no valido - usuario no existente en BD'
+                msg: 'Token no valido - usuario no existente en BD'
             })
         }
         // Verificar si el uid no esta marcado con state false
-        if(!userAuth.state){
+        if (!userAuth.state) {
             return res.status(401).json({
-                msg:'Token no valido - user state false'
+                msg: 'Token no valido - user state false'
             })
         }
 
         req.userAuth = userAuth
+        console.log(req.userAuth)
 
         next()
+
     } catch (error) {
         console.log(error)
         res.status(401).json({
             msg: 'Token no valido'
         })
     }
-
-
 }
 
 module.exports = {
