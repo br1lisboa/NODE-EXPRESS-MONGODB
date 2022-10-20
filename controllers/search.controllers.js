@@ -14,20 +14,15 @@ const allowedSchemas = [
 ]
 
 const userSearch = async (term = '', res = response) => {
-
     const isMongoID = ObjectId.isValid(term) // Retrona TRUE o FALSE dependiendo si es o no un ID de MongoDB
-    //console.log(isMongoID)
-    //console.log(term)
 
     if (isMongoID) {
-
         const userFind = await User.findById(term)
         //console.log(userFind)
         return res.status(200).json({
             results: (userFind) ? [userFind] : []
         })
     }
-
     // Con esta expresion irregular hacemos insensible a las keysSensitive al term
     const regex = new RegExp(term, 'i')
 
@@ -44,13 +39,17 @@ const userSearch = async (term = '', res = response) => {
 }
 
 const productSearch = async (term = '', res = response) => {
-    //console.log(term)
+    const isMongoID = ObjectId.isValid(term)
 
-    const regex = RegExp(term, 'i')
+    if (isMongoID) {
+        const productFind = await Product.findById(term).populate('category', 'name')
+        return res.json({
+            results: (productFind) ? [productFind] : []
+        })
+    }
 
-    const productFind = await Product.findOne({ name: regex })
-
-    console.log(productFind)
+    const regex = new RegExp(term, 'i')
+    const productFind = await Product.find({ name: regex, state: true }).populate('category', 'name')
 
     if (!productFind) {
         return res.status(400).json({
@@ -64,17 +63,21 @@ const productSearch = async (term = '', res = response) => {
 }
 
 const categorySearch = async (term = '', res = response) => {
-    //console.log(term)
+    const isMongoID = ObjectId.isValid(term)
 
-    const regex = RegExp(term, 'i')
+    if (isMongoID) {
+        const categoryFind = await Category.findById(term)
+        return res.json({
+            results: (categoryFind) ? [categoryFind] : []
+        })
+    }
 
-    const categoryFind = await Category.findOne({ name: regex })
-
-    console.log(categoryFind)
+    const regex = new RegExp(term, 'i')
+    const categoryFind = await Category.find({ name: regex, state: true })
 
     if (!categoryFind) {
         return res.status(400).json({
-            msg: `La categoria ${categoryFind} no se encuentra en la base de datos`
+            msg: `La categoria ${term} no se encuentra en la base de datos`
         })
     }
 
@@ -84,11 +87,8 @@ const categorySearch = async (term = '', res = response) => {
 }
 
 
-
 const search = (req = request, res = response) => {
-
     const { schema, term } = req.params
-    //console.log(schema, term)
 
     if (!allowedSchemas.includes(schema)) {
         return res.status(400).json({
@@ -100,15 +100,12 @@ const search = (req = request, res = response) => {
         case 'categories':
             categorySearch(term, res)
             break;
-
         case 'products':
             productSearch(term, res)
             break;
-
         case 'users':
             userSearch(term, res)
             break;
-
         default:
             res.status(500).json({
                 msg: 'Se le olvido hacer esta busqueda'
@@ -116,7 +113,6 @@ const search = (req = request, res = response) => {
     }
 
 }
-
 
 module.exports = {
     search
