@@ -12,6 +12,7 @@ class Server {
         this.authPath = '/api/auth'
         this.categoryPath = '/api/category'
         this.productPath = '/api/products'
+        this.search = '/api/search'
 
         // Conectar a BD
         this.connectBD()
@@ -41,6 +42,7 @@ class Server {
         this.app.use(this.usersRoutePath, (require('../routes/user.routes')))
         this.app.use(this.categoryPath, (require('../routes/category.routes')))
         this.app.use(this.productPath, (require('../routes/product.routes')))
+        this.app.use(this.search, (require('../routes/search.routes')))
     }
 
     listen() {
