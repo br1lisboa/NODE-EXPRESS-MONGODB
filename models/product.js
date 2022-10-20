@@ -9,7 +9,7 @@ const ProductSchema = Schema({
         unique: true
     },
     state: {
-        typ: Boolean,
+        type: Boolean,
         default: true,
         required: true
     },
