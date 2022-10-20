@@ -1,4 +1,6 @@
 const { response, request } = require("express");
+const Category = require("../models/category");
+const Product = require("../models/product");
 const User = require("../models/user");
 
 // > Mongo nos cubre con algunas validaciones
@@ -35,11 +37,52 @@ const userSearch = async (term = '', res = response) => {
         $or: [{ name: regex }, { mail: regex }],
         $and: [{ state: true }]
     })
+
     res.json({
         results: users
     })
-
 }
+
+const productSearch = async (term = '', res = response) => {
+    //console.log(term)
+
+    const regex = RegExp(term, 'i')
+
+    const productFind = await Product.findOne({ name: regex })
+
+    console.log(productFind)
+
+    if (!productFind) {
+        return res.status(400).json({
+            msg: `El producto ${productFind} no se encuentra en la base de datos`
+        })
+    }
+
+    res.status(200).json({
+        results: productFind
+    })
+}
+
+const categorySearch = async (term = '', res = response) => {
+    //console.log(term)
+
+    const regex = RegExp(term, 'i')
+
+    const categoryFind = await Category.findOne({ name: regex })
+
+    console.log(categoryFind)
+
+    if (!categoryFind) {
+        return res.status(400).json({
+            msg: `La categoria ${categoryFind} no se encuentra en la base de datos`
+        })
+    }
+
+    res.status(200).json({
+        results: categoryFind
+    })
+}
+
 
 
 const search = (req = request, res = response) => {
@@ -55,11 +98,11 @@ const search = (req = request, res = response) => {
 
     switch (schema) {
         case 'categories':
-
+            categorySearch(term, res)
             break;
 
         case 'products':
-
+            productSearch(term, res)
             break;
 
         case 'users':
