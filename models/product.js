@@ -30,7 +30,8 @@ const ProductSchema = Schema({
         required: true
     },
     description: { type: String },
-    availabe: { type: Boolean, default: true }
+    availabe: { type: Boolean, default: true },
+    img: { type: String }
 })
 
 // Con esta funcion sacamos datos que NO queremos que lleguen a la data

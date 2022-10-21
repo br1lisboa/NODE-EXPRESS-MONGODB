@@ -38,11 +38,21 @@ const isValidCategoryById = async (id) => {
     }
 }
 
+// Existe producto por ID ?
 const isValidProductById = async (id) => {
     const productValid = await Product.findById(id)
     if (!productValid) {
         throw new Error(`No existe producto con el ID ${id}`)
     }
+}
+
+// Validador de schemas admitidos en actualizacion de archivos
+const allowedSchemas = async (schema = '', schemas = []) => {
+    const includ = schemas.includes(schema)
+    if (!includ) {
+        throw new Error(`La coleccion ${schema} no es permitida, ${schemas}`)
+    }
+    return true
 }
 
 module.exports = {
@@ -51,5 +61,6 @@ module.exports = {
     isValidUserById,
     isValidCategoryById,
     isAdminUserByRole,
-    isValidProductById
+    isValidProductById,
+    allowedSchemas
 }

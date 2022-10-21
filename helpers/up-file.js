@@ -7,6 +7,7 @@ const upFile = (files, validExt = ['png', 'jpg', 'jpeg', 'gif'], subCarpet = '')
 
         const { archive } = files;
 
+
         // Con el SPLIT cortamos la cadena de texto segun el parametro que le pasamos, y lo colocamos en un array
         const cutName = archive.name.split('.')
         // De esta manera extraemos la ultima posicion del arreglo, nuestra extension
