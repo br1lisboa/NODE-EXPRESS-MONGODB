@@ -40,7 +40,9 @@ class Server {
         // Maneja el FileUploads
         this.app.use(fileUpload({
             useTempFiles: true,
-            tempFileDir: '/tmp/'
+            tempFileDir: '/tmp/',
+            // Esta configuracion en true permite a fileUpload que cree directorios si no existen.
+            createParentPath: true
         }));
 
     }

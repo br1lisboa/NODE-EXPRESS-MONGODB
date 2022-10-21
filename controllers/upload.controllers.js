@@ -1,26 +1,25 @@
-const path = require('path')
 
-const { request, response } = require("express")
+const { request, response } = require("express");
+const { upFile } = require("../helpers");
 
-const uploadFile = (req = request, res = response) => {
+const uploadFile = async (req = request, res = response) => {
 
     if (!req.files || Object.keys(req.files).length === 0 || !req.files.archive) {
         res.status(400).json({ msg: 'No hay archivos en la peticion para ser subidos' });
         return;
     }
 
-    const { archive } = req.files;
+    try {
+        const name = await upFile(req.files, undefined, 'imgs')
+        res.json({
+            name
+        })
+    } catch (error) {
+        res.status(400).json({
+            error
+        })
+    }
 
-    // Construccion del path donde quiero colocar el archivo
-    const uploadPath = path.join(__dirname, '../uploads/', archive.name);
-
-    // Esta fn md sirve para mover el archivo donde lo quiero colocar
-    archive.mv(uploadPath, (err) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.json({ msg: 'El archivo se subio a ' + uploadPath });
-    });
 
 }
 
