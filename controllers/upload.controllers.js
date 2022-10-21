@@ -1,3 +1,5 @@
+const path = require('path')
+const fs = require('fs')
 
 const { request, response } = require("express");
 const { upFile } = require("../helpers");
@@ -46,6 +48,15 @@ const updateFile = async (req = request, res = response) => {
             return res.status(500).json({ msg: 'Se me olvido validar esto' })
     }
 
+    // Limpiar imagenes previas
+    if (models.img) {
+        //Hay que borrar la img del servidor
+        const pathImg = path.join(__dirname, '../uploads', schema, models.img)
+        if (fs.existsSync(pathImg)) {
+            fs.unlinkSync(pathImg)
+        }
+    }
+
     const name = await upFile(req.files, undefined, schema)
 
     models.img = name
@@ -58,7 +69,48 @@ const updateFile = async (req = request, res = response) => {
 
 }
 
+const showImg = async (req = request, res = response) => {
+
+    // Estos nombres los estoy definiendo en el router
+    const { id, schema } = req.params
+
+    let models
+
+    switch (schema) {
+        case 'users':
+            models = await User.findById(id)
+            if (!models) {
+                return res.status(400).json({ msg: `No existe un usuario con el ID ${id}` })
+            }
+            break;
+
+        case 'products':
+            models = await Product.findById(id)
+            if (!models) {
+                return res.status(400).json({ msg: `No existe un producto con el ID ${id}` })
+            }
+            break;
+
+        default:
+            return res.status(500).json({ msg: 'Se me olvido validar esto' })
+    }
+
+    // Limpiar imagenes previas
+    if (models.img) {
+        //Hay que borrar la img del servidor
+        const pathImg = path.join(__dirname, '../uploads', schema, models.img)
+        if (fs.existsSync(pathImg)) {
+            return res.sendFile(pathImg)
+        }
+    }
+
+    res.json({
+        msg: 'Falta placeHolder'
+    })
+}
+
 module.exports = {
     uploadFile,
-    updateFile
+    updateFile,
+    showImg
 }
