@@ -39,4 +39,7 @@
 * Google FrontEnd SIGNIN and SIGNOUT.
 * Customs users create from GoogleAccounts. 
 
+* Cloudinary
+* Cloudinary SDK
+
 ### *Thanks for stopping by here!*
