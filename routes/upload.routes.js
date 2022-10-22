@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const { check } = require('express-validator')
 
-const { uploadFile, updateFile, showImg } = require('../controllers/upload.controllers')
+const { uploadFile, updateFile, showImg, updateFileClaudinary } = require('../controllers/upload.controllers')
 const { allowedSchemas } = require('../helpers')
 const { validateJWT, validateArch } = require('../middlewares')
 const { validateInp } = require('../middlewares/validate-inp')
@@ -22,7 +22,8 @@ router.put('/:schema/:id', [
     check('id', 'El ID debe ser de Mongo').isMongoId(),
     check('schema').custom(c => allowedSchemas(c, ['users', 'products'])),
     validateInp
-], updateFile)
+], updateFileClaudinary)
+//updateFile)
 
 // Servir Img
 router.get('/:schema/:id', [
