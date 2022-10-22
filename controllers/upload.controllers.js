@@ -104,9 +104,8 @@ const showImg = async (req = request, res = response) => {
         }
     }
 
-    res.json({
-        msg: 'Falta placeHolder'
-    })
+    const pathImg = path.join(__dirname, '../assets/no-image.jpg')
+    res.sendFile(pathImg)
 }
 
 module.exports = {
